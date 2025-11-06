@@ -1,0 +1,101 @@
+# ============================
+# PLANESNET COMMANDS GUIDE
+# ============================
+
+# ----------------------------
+# 1. Neural Networks (MLP / CNN / ResNet18)
+# ----------------------------
+
+# MLP
+python planesnet_nn.py --json Data/planesnet/planesnet.json --model mlp --epochs 20 --batch-size 256
+
+# CNN
+python planesnet_nn.py --json Data/planesnet/planesnet.json --model cnn --epochs 25 --batch-size 256
+
+# ResNet18
+python planesnet_nn.py --json Data/planesnet/planesnet.json --model resnet18 --epochs 30 --batch-size 256 --amp
+
+# Evaluate saved model
+python planesnet_nn.py --json Data/planesnet/planesnet.json --evaluate --checkpoint runs_nn/best_model.pt
+
+
+# ----------------------------
+# 2. K-Nearest Neighbors (KNN)
+# ----------------------------
+
+# KNN basic
+python planesnet_knn.py --json Data/planesnet/planesnet.json
+
+# KNN with search
+python planesnet_knn.py --json Data/planesnet/planesnet.json --search --max-k 39
+
+
+# ----------------------------
+# 3. Naive Bayes Classifier
+# ----------------------------
+
+python planesnet_bayes.py --json Data/planesnet/planesnet.json --pca 100
+
+
+# ----------------------------
+# 4. Decision Tree
+# ----------------------------
+
+# Train + visualize
+python planesnet_decision_tree.py --json Data/planesnet/planesnet.json --export-graphviz
+
+# Render tree (requires graphviz)
+dot -Tpng runs_dtree/tree.dot -o runs_dtree/tree.png
+
+
+# ----------------------------
+# 5. K-Means Clustering
+# ----------------------------
+
+# Basic 2 clusters (plane/no-plane)
+python planesnet_kmeans.py --json Data/planesnet/planesnet.json --n-clusters 2 --pca 50
+
+# Elbow curve
+python planesnet_kmeans.py --json Data/planesnet/planesnet.json --pca 50 --elbow-max 10
+
+
+# ----------------------------
+# 6. Hierarchical Clustering
+# ----------------------------
+
+python planesnet_hclust.py --json Data/planesnet/planesnet.json --n-clusters 2 --pca 100 --linkage average --metric cosine
+
+
+# ----------------------------
+# 7. Time Series Analysis
+# ----------------------------
+
+# Global (daily plane counts)
+python planesnet_timeseries.py --json Data/planesnet/planesnet.json --h 14
+
+# Per geo zone (~airport level)
+python planesnet_timeseries.py --json Data/planesnet/planesnet.json --geo-bin 2 --h 7
+
+
+# ----------------------------
+# 8. PlanesNet Runner (Unified launcher)
+# ----------------------------
+
+# Train CNN
+python planesnet_runner.py --algo cnn --mode train --json Data/planesnet/planesnet.json
+
+# Test CNN
+python planesnet_runner.py --algo cnn --mode test --json Data/planesnet/planesnet.json
+
+# MLP / ResNet18
+python planesnet_runner.py --algo mlp --mode train --json Data/planesnet/planesnet.json
+python planesnet_runner.py --algo resnet18 --mode train --json Data/planesnet/planesnet.json --extra "--amp --epochs 30"
+
+# Supervised group
+python planesnet_runner.py --algo all-supervised --mode train --json Data/planesnet/planesnet.json
+
+# Unsupervised group
+python planesnet_runner.py --algo all-unsupervised --mode train --json Data/planesnet/planesnet.json
+
+# All algorithms
+python planesnet_runner.py --algo all --mode train --json Data/planesnet/planesnet.json
